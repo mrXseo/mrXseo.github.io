@@ -1,0 +1,17 @@
+language-python
+
+tests():
+    ...
+    #--------------------------#
+    # kase#4 : work
+    #--------------------------#
+    rod_4 = Rod(3*1)
+    rod_4.add_fixation(0, 0)
+    rod_4.add_force(0.5, "vertical", -4*1000, 0.5)
+    rod_4.add_force(2, "rotate", 6*1000)
+    rod_4.add_force(2.5, "vertical", -4*1000, 0.5)
+    rod_4.add_force(3, "vertical", 2*1000)
+    rod_4.colculate_less_forces()
+    rod_4.print_forces()
+    rod_4.draw_forses_grafs(["Qy", "Px", "Mz"], graf_zones=[0,0.5,2,2.5,3])
+    ...

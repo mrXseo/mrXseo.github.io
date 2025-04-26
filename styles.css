@@ -1,0 +1,88 @@
+/* Основные стили */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    background-color: #f5f5f5;
+}
+
+header {
+    text-align: center;
+    padding: 2rem 0;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 2rem;
+}
+
+h1, h2, h3 {
+    color: #2c3e50;
+}
+
+/* Стили для секций с визуализациями */
+.visualization {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.visualization-content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.graph-container, .code-container {
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.graph-container {
+    flex: 1 1 50%;
+    min-width: 300px;
+    border-right: 1px solid #eee;
+}
+
+.code-container {
+    flex: 1 1 50%;
+    min-width: 300px;
+    background-color: #282c34;
+    color: #abb2bf;
+}
+
+.graph-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.graph-description {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Стили для подвала */
+footer {
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    border-top: 1px solid #ddd;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .visualization-content {
+        flex-direction: column;
+    }
+    
+    .graph-container {
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+}
