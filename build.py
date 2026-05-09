@@ -83,7 +83,7 @@ full_html = f"""<!DOCTYPE html>
 </body>
 </html>"""
 
-out = Path("project/output/index.html")
+out = Path("project/index.html")
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(full_html, encoding="utf-8")
 print(f"Сайт собран: {len(full_html)} байт")
