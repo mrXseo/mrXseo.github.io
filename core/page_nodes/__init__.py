@@ -1,26 +1,30 @@
-from project.core.page_elements import Element
+from ..page_elements import PageElement
 
-class Section(Element):
-    """Композитный узел: содержит другие элементы (уровень 3)."""
-    def __init__(self, title: str, children: list[Element] | None = None):
-        self.title = title
-        self.children = children or []
+class SiteNode:
+    def __init__(self, name: str, elem: PageElement = None, meta: dict = None):
+        self.name = name
+        self.elem = elem
+        self.children: list['SiteNode'] = []
+        self.meta = meta or {}
+        self.tag = ""
 
-    def render(self, context) -> str:
-        rendered_children = "\n".join(
-            child.render(context) for child in self.children
-        )
-        return f"<section><h2>{self.title}</h2>{rendered_children}</section>"
+    def add_child(self, node: 'SiteNode'):
+        self.children.append(node)
 
-class Page(Element):
-    """Корневой узел страницы."""
-    def __init__(self, title: str, sections: list[Section] | None = None):
-        self.title = title
-        self.sections = sections or []
+    def init_tree(self, parent_tag: str = ""):
+        self.tag = f"{parent_tag}_{self.name}" if parent_tag else self.name
+        if self.elem:
+            self.elem.init(self.tag)
+        for child in self.children:
+            child.init_tree(self.tag)
 
-    def render(self, context) -> str:
-        # просто делегирует секциям, сами секции уже умеют рендерить своих детей
-        rendered_sections = "\n".join(
-            section.render(context) for section in self.sections
-        )
-        return rendered_sections
+    def build_tree(self) -> str:
+        # Сначала строим детей
+        children_data = [(child, child.build_tree()) for child in self.children]
+
+        if self.elem:
+            self.elem.ready(children_data)
+            return self.elem.build()
+        else:
+            # Если узлу не назначен элемент, просто склеиваем HTML детей
+            return "".join(html for _, html in children_data)
