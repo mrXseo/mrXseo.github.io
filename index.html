@@ -3,23 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>XSEO</title>
+  <title>XSEO — XSEO</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; color: #1a1a1a; background: #f5f7fa; line-height: 1.5; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; background: #f5f7fa; line-height: 1.5; }
     .container { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
     header { text-align: center; padding: 3rem 0 2rem; }
     h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 0.3rem; }
-    .subtitle { font-size: 1.3rem; color: #555; }
-    .tabs { display: flex; justify-content: center; gap: 1rem; margin: 2.5rem 0 1rem; flex-wrap: wrap; }
-    .tab-btn { background: #e2e6ea; border: none; padding: 0.7rem 1.8rem; border-radius: 2rem; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+    .subtitle { font-size: 1.3rem; color: #555; margin-bottom: 1rem; }
+    .tagline { font-size: 1.1rem; color: #777; max-width: 600px; margin: 0 auto; }
+
+    /* Tabs navigation */
+    .tabs { display: flex; justify-content: center; gap: 1rem; margin: 2.5rem 0 2rem; flex-wrap: wrap; }
+    .tab-btn { background: #e2e6ea; border: none; padding: 0.7rem 1.8rem; border-radius: 2rem; font-size: 1rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
     .tab-btn.active { background: #0f1626; color: white; }
-    .tab-btn:hover:not(.active) { background: #cfd5db; }
-    .tab-pane { display: none; animation: fade 0.3s; }
+    .tab-btn:hover:not(.active) { background: #d0d5db; }
+
+    /* Tab content */
+    .tab-pane { display: none; animation: fade 0.4s; }
     .tab-pane.active { display: block; }
     @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    .card { background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
+
+    /* Cards & accordion */
+    .card { background: white; border-radius: 16px; padding: 1.8rem; margin-bottom: 2rem; box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
+    h2 { font-size: 1.8rem; margin-bottom: 1rem; }
+    h3 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .accordion-item { border-bottom: 1px solid #ddd; }
+    .accordion-header { width: 100%; text-align: left; background: none; border: none; padding: 1rem 0; font-size: 1.1rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .accordion-header::after { content: '+'; font-size: 1.5rem; transition: 0.2s; }
+    .accordion-header.open::after { content: '−'; }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .accordion-body.open { max-height: 20rem; } /* enough for content */
+    .accordion-content { padding-bottom: 1.5rem; color: #333; }
+
+    .accordion-content h3 {
+        font-size: 1.2rem;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .accordion-content p {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Project cards */
+    .project-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .project-card { background: white; border-radius: 16px; padding: 1.5rem; flex: 1 1 280px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: 0.2s; }
+    .project-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .project-card h3 { margin-bottom: 0.5rem; }
+    .tech-tag { display: inline-block; background: #e9ecf0; padding: 0.2rem 0.8rem; border-radius: 12px; font-size: 0.8rem; margin-right: 0.3rem; margin-bottom: 0.4rem; }
+    .btn { background: #0f1626; color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 8px; cursor: pointer; font-size: 0.9rem; margin-top: 0.8rem; transition: 0.2s; }
+    .btn:hover { background: #2a3548; }
+
+    /* Modal */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal.open { display: flex; }
+    .modal-content { background: white; max-width: 650px; width: 90%; border-radius: 20px; padding: 2rem; position: relative; max-height: 80vh; overflow-y: auto; }
+    .modal-close { position: absolute; top: 1rem; right: 1.2rem; background: none; border: none; font-size: 1.8rem; cursor: pointer; }
+    .metrics { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0; }
+    .metric { background: #f0f4f8; padding: 0.6rem 1rem; border-radius: 10px; font-weight: 600; }
     footer { text-align: center; padding: 2rem 0; color: #777; font-size: 0.9rem; }
+    
+    /* Markdown-списки */
+    .md-content ul,
+    .md-content ol {
+        padding-left: 2rem;      /* отступ как табуляция */
+        margin: 0.5rem 0;
+        list-style-position: outside;
+    }
+    .md-content li {
+        margin-bottom: 0.25rem;
+    }
   </style>
 </head>
 <body>
@@ -27,49 +80,277 @@
     <header>
       <h1>XSEO</h1>
       <div class="subtitle">Systems Architect</div>
-      <p>Нерушимые фундаменты для сложных систем</p>
+      <div class="tagline">Строю нерушимые фундаменты для сложных систем. Упаковываю сложность в простые библиотечные API для команд.</div>
     </header>
+
     
         <div class="tabs-container" id="page_maintabs">
-            <div class="tabs"><button class="tab-btn active" onclick="switchTab('page_maintabs_methodology')">Методология</button><button class="tab-btn " onclick="switchTab('page_maintabs_projects')">Проекты</button><button class="tab-btn " onclick="switchTab('page_maintabs_about')">О себе</button></div>
+            <div class="tabs"><button class="tab-btn active" data-tab="page_maintabs_methodology">Методология</button><button class="tab-btn " data-tab="page_maintabs_projects">Проекты</button><button class="tab-btn " data-tab="page_maintabs_about">О себе</button><button class="tab-btn " data-tab="page_maintabs_contact">Контакты</button></div>
             <div class="tab-pane active" id="page_maintabs_methodology">
         <section id="page_maintabs_methodology">
             <h2>Методология</h2>
-            <div id="page_maintabs_methodology_desc"><p><strong>Библиотечный модуль</strong>, <strong>Нерушимый фундамент</strong>, <strong>AI‑Native дизайн</strong>.</p>
-</div>
+            <div class="card" id="page_maintabs_methodology_accordion">
+            <div class="accordion-item">
+              <button class="accordion-header">Библиотечный модуль: сложность под капотом</button>
+              <div class="accordion-body" style="">
+                <div class="accordion-content"><div id="page_maintabs_methodology_accordion_item_content" class="md-content">
+<p><strong>Суть:</strong> Сложное ядро прячется за простым фасадом.</p>
+<p><strong>Как это работает:</strong><br />
+Любая подсистема (монадическая рекурсия, ECS-ядро, цепочки делегирования) упаковывается как документированная библиотека. Команда использует только высокоуровневые вызовы вроде <code>add_plugin</code> или <code>pretty_print</code>, не касаясь внутренней механики. Это снижает порог входа и позволяет системе расти без моего участия.</p>
+</div></div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Нерушимый фундамент: fail-fast и защита от дурака</button>
+              <div class="accordion-body" style="">
+                <div class="accordion-content"><div id="page_maintabs_methodology_accordion_item_content" class="md-content">
+<p><strong>Суть:</strong> Ошибки конфигурации обнаруживаются на этапе сборки, а не в продакшене.</p>
+<p><strong>Как это работает:</strong><br />
+Контракты проверяются сразу: assert-ы, биекция полей, контроль циклических зависимостей. Некорректная конфигурация вызывает исключение мгновенно, давая команде немедленную обратную связь. Это экономит недели отладки на поздних стадиях.</p>
+</div></div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">AI-Native архитектура</button>
+              <div class="accordion-body" style="">
+                <div class="accordion-content"><div id="page_maintabs_methodology_accordion_item_content" class="md-content">
+<p><strong>Суть:</strong> Проектирование, дружественное и человеку, и AI‑агенту.</p>
+<p><strong>Как это работает:</strong><br />
+Система разбивается на изолированные компоненты с однозначными контрактами. Каждый компонент содержит ограниченный и ясный контекст, что идеально подходит для Copilot или Cursor — они генерируют код без конфликтов. Онбординг новых разработчиков ускоряется, потому что объём контекста, который необходимо изучить, минимален.</p>
+</div></div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Плагин‑first проектирование</button>
+              <div class="accordion-body" style="">
+                <div class="accordion-content"><div id="page_maintabs_methodology_accordion_item_content" class="md-content">
+<p><strong>Суть:</strong> Расширение функционала через плагины — стандарт, а не опция.</p>
+<p><strong>Как это работает:</strong><br />
+Новое поведение добавляется созданием отдельного файла (плагина), который автоматически подхватывается системой. Ядро остаётся неизменным. Это обеспечивает экстремальную развертываемость: новый плагин для пули, генератор отчёта или правило валидации внедряются за минуты, без риска затронуть существующую функциональность.</p>
+</div></div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">Принцип «Вырываемого кода»</button>
+              <div class="accordion-body" style="">
+                <div class="accordion-content"><div id="page_maintabs_methodology_accordion_item_content" class="md-content">
+<p><strong>Суть:</strong> Любой модуль можно извлечь и запустить изолированно.</p>
+<p><strong>Как это работает:</strong><br />
+Каждый компонент проектируется как самодостаточная единица с минимальными внешними связями. Вы можете вынуть модуль из проекта, установить его зависимости и запустить отдельно. Это высший пилотаж переиспользуемости: код живёт собственной жизнью и может быть использован в других проектах без переписывания.</p>
+</div></div>
+              </div>
+            </div></div>
         </section></div><div class="tab-pane " id="page_maintabs_projects">
         <section id="page_maintabs_projects">
             <h2>Проекты</h2>
             
-        <div class="card" id="page_maintabs_projects_gunverse">
+        <div class="card" id="page_maintabs_projects_gunverse_card">
             <h3>Gunverse</h3>
-            <p>Компонентный фреймворк для игровых механик.</p>
-            
+            <p></p>
+            <div id="page_maintabs_projects_gunverse_card_desc" class="md-content"><h1>Gunverse</h1>
+<p>Компонентный фреймворк для игровых механик - Дизайнерам удобно, программистам стабильно, машине эффективно.</p>
+</div><span class="tech-tag">GDScript</span><span class="tech-tag">ECS</span><span class="tech-tag">Zero-If</span><button class="btn" onclick="openModal('gunverse')">Подробнее</button>
         </div>
-        <div class="card" id="page_maintabs_projects_liion">
-            <h3>Li-ion Sim</h3>
-            <p>Научный комплекс моделирования батарей.</p>
-            
+        <div class="card" id="page_maintabs_projects_simulator_card">
+            <h3>Li-ion Battery Simulation</h3>
+            <p></p>
+            <div id="page_maintabs_projects_simulator_card_desc" class="md-content"><h1>Simulation Framework</h1>
+<p>Фреймворк для любых динамических систем — Моделям свобода, конфигурациям порядок, исследованиям скорость</p>
+</div><span class="tech-tag">Python</span><span class="tech-tag">DearPyGui</span><span class="tech-tag">Dataflow</span><button class="btn" onclick="openModal('simulator')">Подробнее</button>
+        </div>
+        <div class="card" id="page_maintabs_projects_qa_graph_card">
+            <h3>QA Graph Migrator</h3>
+            <p></p>
+            <div id="page_maintabs_projects_qa_graph_card_desc" class="md-content"><h1>QA Graph Migrator</h1>
+<p>Простое тестирование сложных данных — Структурам порядок, миграциям точность, разработчикам покой.</p>
+</div><span class="tech-tag">Python</span><span class="tech-tag">State Monad</span><span class="tech-tag">PostgreSQL</span><button class="btn" onclick="openModal('qa_graph')">Подробнее</button>
         </div>
         </section></div><div class="tab-pane " id="page_maintabs_about">
         <section id="page_maintabs_about">
             <h2>О себе</h2>
-            <div id="page_maintabs_about_bio"><p>5 лет инженерной практики, математический бэкграунд, бакалавр приборостроения.</p>
+            <div id="page_maintabs_about_bio" class="md-content"><p><strong>5 лет</strong> инженерной практики (2021–2026). Совмещал роли QA-архитектора, техлида игрового проекта, фрилансера и R&amp;D-инженера.</p>
+<p>Бакалавр приборостроения (МГТУ им. Баумана), математическое самообразование (теория категорий, аппроксимация, тервер).</p>
+<p>Уверенный Linux (Arch), английский B1 (техническая документация).</p>
+</div>
+        </section></div><div class="tab-pane " id="page_maintabs_contact">
+        <section id="page_maintabs_contact">
+            <h2>Контакты</h2>
+            <div id="page_maintabs_contact_info" class="md-content"><p>📧 <a href="mailto:xseo.22.24vl@gmail.com">xseo.22.24vl@gmail.com</a></p>
+</div><div id="page_maintabs_contact_info" class="md-content"><p>💬 Telegram: <a href="https://t.me/Xseo_Tristielles">@Xseo_Tristielles</a></p>
+</div><div id="page_maintabs_contact_info" class="md-content"><p>🐙 GitHub: <a href="https://github.com/mrXseo">mrXseo</a></p>
+</div><div id="page_maintabs_contact_info" class="md-content"><p>📍 Россия, UTC+3</p>
 </div>
         </section></div>
         </div>
+        <div class="modal" id="modal-gunverse">
+          <div class="modal-content">
+            <button class="modal-close"
+                    onclick="closeModal('gunverse')">&times;</button>
+            <h2>Gunverse — компонентный фреймворк</h2>
+            <div id="page_modals_modal_gunverse_body" class="md-content"><hr />
+<p><strong>Gunverse</strong> — фреймворк для создания высокопроизводительных игровых сущностей в Godot Engine. Спроектирован так, чтобы дизайнеры и программисты работали в одной среде без конфликтов.</p>
+<p><strong>Киллер-фичи для команды:</strong></p>
+<ul>
+<li>Дизайнер создаёт целые классы пуль без единой строки кода — всё через Inspector.</li>
+<li>Полная интеграция в родной интерфейс Godot, никаких внешних редакторов.</li>
+<li>Программист добавляет новое поведение как плагин (один <code>.gd</code>-файл) — система сама подхватывает его и расширяет инструментарий дизайнера.</li>
+</ul>
+<p><strong>Что под капотом:</strong></p>
+<ul>
+<li><strong>ECS-подобное ядро с Data-Oriented Design:</strong> данные лежат в кэш-дружественных массивах, поведение — композиция независимых Callable.</li>
+<li><strong>Zero-If в рантайме:</strong> все условия разрешаются на этапе сборки; во время игры — только прямые вызовы.</li>
+<li><strong>Command Buffer для безопасности:</strong> изменение состава процессов во время кадра не ломает итерацию — изменения применяются атомарно на следующем кадре.</li>
+<li><strong>Реестр сборки:</strong> детальные логи происхождения каждого слота (provenance) для отладки.</li>
+</ul>
+<p><strong>Реальный пример:</strong>
+Стартовый набор из 3 плагинов даёт дизайнеру настройку кривых траекторий для движения по прямой. Добавив <strong>1 плагин за 1 час</strong>, программист открывает дизайнеру:</p>
+<ul>
+<li>любые траектории в любом направлении,</li>
+<li>зависимость скорости от урона и наоборот,</li>
+<li>отскоки, пробивание, эффекты попаданий,</li>
+<li>самонаведение на разные цели.</li>
+</ul>
+<p>При этом код ядра не меняется.</p>
+<p><strong>Производительность (тесты на AMD Ryzen 5 3550G, встроенная графика):</strong></p>
+<ul>
+<li>до 2500 сущностей с одним процессом при 60 FPS,</li>
+<li>до 900 сущностей с четырьмя процессами при 60 FPS.
+Это близко к пределу возможностей Godot без замены рантайма на нативный код.</li>
+</ul>
+<p><strong>Надёжность:</strong> чёткая архитектура и fail-fast на этапе сборки исключают баги на стыках процессов — некорректная конфигурация не долетает до сцены.</p>
+<p><strong>Затрачено:</strong> 57 часов на проектирование, реализацию и тестирование.</p>
+<hr />
+</div>
+          </div>
+        </div>
+        <div class="modal" id="modal-simulator">
+          <div class="modal-content">
+            <button class="modal-close"
+                    onclick="closeModal('simulator')">&times;</button>
+            <h2>Li-ion Battery Simulation</h2>
+            <div id="page_modals_modal_simulator_body" class="md-content"><hr />
+<p><strong>Simulation Framework</strong> — универсальный фреймворк для моделирования динамических систем. Подставьте свою модель — получите готовый исследовательский прибор с визуальным редактором, живыми графиками и автоматическими отчётами.</p>
+<p><strong>Киллер-фичи для исследователей и инженеров:</strong></p>
+<ul>
+<li><strong>Модель меняется как перчатка.</strong> Заменили физику, фильтр или источник сигнала — графики и отчёты подхватывают изменения без правки интерфейса.</li>
+<li><strong>Визуальный редактор конфигурации.</strong> Параметры любого объекта хранятся в JSON; редактор подсвечивает изменения, кнопка Save применяет их на лету, кнопка Reload откатывает.</li>
+<li><strong>Отчёты одной командой.</strong> CSV‑лог → графики, метрики (RMSE, MAE, Max Error) — всё генерируется автоматически.</li>
+<li><strong>Воспроизводимость из коробки.</strong> Иерархия настроек вида <code>эксперимент@модель@фильтр.json</code> позволяет сохранять и возвращать эталонные состояния.</li>
+</ul>
+<p><strong>Что под капотом:</strong></p>
+<ul>
+<li><strong>Dataflow‑движок с временной синхронизацией.</strong> Генераторы, трансформаторы и логгеры связываются явными контрактами (<code>set_input</code>). Движок сам определяет, чьи данные готовы, — исключая чтение «из будущего».</li>
+<li><strong>Иерархический DI‑контейнер AppContext.</strong> Каждый объект получает параметры из JSON, лежащего по понятному пути. Файловые настройки перезаписывают переданные аргументы — сам класс не знает о конфигурации.</li>
+<li><strong>Декларативный UI‑фреймворк (UINode‑TreeParser).</strong> Интерфейс собирается как дерево узлов и не зависит от конкретной GUI‑библиотеки. Замена DearPyGui на другой рендерер — вопрос замены адаптера.</li>
+<li><strong>Жёсткое Model‑View разделение.</strong> Симуляция не знает о графиках, виджеты не знают о моделях. Добавить новый источник данных или визуализацию можно независимо.</li>
+</ul>
+<p><strong>Пример: Li‑ion аккумулятор</strong></p>
+<p>В одном из сценариев в движок загружены: модель батареи (Тевенин 1RC с гистерезисом), генератор тока, шум измерений и Расширенный Фильтр Калмана (EKF). Чтобы заменить батарею на модель с двумя RC‑звеньями или добавить тепловую обратную связь, достаточно:</p>
+<ol>
+<li>Реализовать класс с методом <code>solve_frame()</code>.</li>
+<li>Подключить его в сценарии.</li>
+<li>Новые выходы автоматически попадают в логгер и на графики.</li>
+</ol>
+<p>Старые отчёты и панели управления продолжают работать без единой правки.</p>
+<p><strong>Точность и производительность (на примере EKF):</strong></p>
+<ul>
+<li>RMSE оценки заряда = <strong>0.000015</strong> (200 000 шагов).</li>
+<li>RMSE напряжения = <strong>0.00999 В</strong>.</li>
+<li>Интерфейс остаётся отзывчивым при ускорении симуляции <strong>до 25×</strong>.</li>
+</ul>
+<p><strong>Надёжность:</strong>
+Fail‑fast на этапе сборки сценария: некорректные конфигурации детектируются при старте, а не в середине расчёта.</p>
+<p><strong>Затрачено:</strong> ядро симуляции и декларативный UI‑фреймворк вместе с li-ion экспериментальной базой созданы в рамках R&amp;D‑цикла за 76 часов.</p>
+</div>
+          </div>
+        </div>
+        <div class="modal" id="modal-qa_graph">
+          <div class="modal-content">
+            <button class="modal-close"
+                    onclick="closeModal('qa_graph')">&times;</button>
+            <h2>QA Graph Migrator</h2>
+            <div id="page_modals_modal_qa_graph_body" class="md-content"><hr />
+<p><strong>QA Graph Migrator</strong> — конвейер для автоматической очистки и унификации тестовых данных. Сложные графы проверяются простыми правилами, а тестовый сьют получает только чистые данные.</p>
+<p><strong>Киллер-фичи для команды:</strong></p>
+<ul>
+<li>Тестировщик получает «чистое» пространство данных одной функцией — никакой ручной правки JSON или базы.</li>
+<li>Добавление нового продукта — два файла-стандарта: интерпретация + валидация. Переписывать ядро не нужно.</li>
+<li>Лид, который не дружит с классами, может расширить проверки по шаблону из README за полчаса.</li>
+<li>Система отлавливает невалидные значения на входе и заменяет их на документированные умолчания — баги форматов больше не маскируются под баги продукта.</li>
+</ul>
+<p><strong>Что под капотом:</strong></p>
+<ul>
+<li><strong>Графовое ядро <code>HierarchicalEntity</code> с монадической рекурсией (State Monad).</strong> Узлы — устройства, компоненты, входы/выходы; каскадные задачи обходят связи автоматически. Эхо‑резистентность исключает зацикливание обходов.</li>
+<li><strong>Двухфазный конвейер:</strong> Интерпретация (нормализация полей по документации, например версия «2,01» → 201) → Валидация (жёсткая проверка по типам и диапазонам). Фазы настраиваются раздельно.</li>
+<li><strong>Мигратор с авторазрешением зависимостей:</strong> вычисляет порядок применения правил, не требуя ручной сортировки полей. При неразрешимых зависимостях выдаёт читаемый лог.</li>
+</ul>
+<p><strong>Измеренное влияние:</strong></p>
+<ul>
+<li><strong>×24 ускорение</strong> прогона тестов при работе с БД — однократная загрузка и кэширование таблиц типов (<code>DBTable</code>) вместо тысяч запросов.</li>
+<li><strong>–76% сквозных ошибок</strong> (с ~30% до &lt;10% падений из-за несовпадения форматов).</li>
+<li><strong>&lt; 1 часа</strong> на добавление поддержки нового типа устройств (против нескольких дней ручной адаптации).</li>
+<li><strong>–60% объёма кода</strong> в тестовых сценариях благодаря фасаду сравнения.</li>
+</ul>
+<p><strong>Надёжность и расширяемость:</strong></p>
+<ul>
+<li>Fail‑fast на этапе сборки: неподдерживаемый тип источника или несовпадение полей интерпретации и валидации ловятся сразу.</li>
+<li>Модульная архитектура: ядро, миграция и инструменты разделены. Утилиты (поиск узлов, компаратор пространств) переиспользуются без дублирования.</li>
+<li>Устойчивость к изменениям продуктов: бизнес‑логика тестов не содержит кода нормализации и не сломается при смене структуры конфигов.</li>
+</ul>
+<p><strong>Стек:</strong> Python, PostgreSQL, pytest.</p>
+<p><strong>Паттерны:</strong> State Monad, Interpreter, Теория категорий (формализация), Fail‑fast.</p>
+<p><strong>Контекст:</strong> Реализовано с нуля за время стажировки в отделе QA. Самостоятельно спроектирована архитектура, графовое ядро, миграционный движок и библиотека инструментов для команды.</p>
+<p><strong>Затрачено:</strong> 83 часа на проектирование, реализацию ядра, мигратора, загрузчиков, стандартов для двух реальных систем и набора инструментов.</p>
+<hr />
+</div>
+          </div>
+        </div>
+
   </div>
-  <footer>&copy; 2026 XSEO</footer>
+  <footer>
+    <p>© 2026 XSEO. Создано с инженерной точностью.</p>
+  </footer>
+
   <script>
-    function switchTab(targetId) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-      const pane = document.getElementById(targetId);
-      if (pane) pane.classList.add('active');
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        if (btn.getAttribute('onclick')?.includes(`'${targetId}'`)) btn.classList.add('active');
+    // Tabs logic
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.dataset.tab;
+        panes.forEach(p => p.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
       });
+    });
+
+    // Accordion logic
+    document.querySelectorAll('.accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        header.classList.toggle('open');
+        const body = header.nextElementSibling;
+        if (body.style.maxHeight) {
+          body.style.maxHeight = null;
+          body.classList.remove('open');
+        } else {
+          body.style.maxHeight = body.scrollHeight + 'px';
+          body.classList.add('open');
+        }
+      });
+    });
+
+    // Modal functions
+    function openModal(id) {
+      document.getElementById('modal-' + id).classList.add('open');
     }
+    function closeModal(id) {
+      document.getElementById('modal-' + id).classList.remove('open');
+    }
+    // Close modal on outside click
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) e.target.classList.remove('open');
+    });
   </script>
 </body>
 </html>

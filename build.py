@@ -1,89 +1,158 @@
+# project/build.py
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "project"))
+sys.path.insert(0, str(Path(__file__).parent))
 
-from core.page_elements import TextElement, CardElement, SectionElement, TabsElement
+from core.page_elements import (
+    TextElement, SectionElement, TabsElement,
+    CardElement, TechTagElement, ButtonElement,
+    ModalElement, ModalContainerElement,
+    AccordionElement, AccordionItemElement
+)
 from core.page_nodes import SiteNode
+from core.page_builders import SiteBuilder
+from core.page_di_tools import FileDI  # инъектор зависимостей
 
-# Корень
-page = SiteNode("page")
 
-# Вкладки
-tabs = SiteNode("maintabs", TabsElement())
+# ----------------------------------------------------------------------
+# Настройка инъектора для загрузки Markdown-файлов
+# ----------------------------------------------------------------------
+# Указываем базовую папку для поиска контента — папка project/
+FileDI.load_directory = Path(__file__).parent
 
-# Вкладка 1: Методология
-sec1 = SiteNode("methodology", SectionElement("Методология"), meta={"tab_title": "Методология"})
-sec1.add_child(SiteNode("desc", TextElement("**Библиотечный модуль**, **Нерушимый фундамент**, **AI‑Native дизайн**.")))
-tabs.add_child(sec1)
+# Фабрики для загрузки превью и полного описания проектов
+def load_preview(project_name: str) -> FileDI:
+    """Создаёт TextElement, наполненный содержимым preview.md проекта."""
+    return FileDI(
+        TextElement,
+        load_first=True,
+        content=Path("content") / "projects" / project_name / "preview.md"
+    )
 
-# Вкладка 2: Проекты
-sec2 = SiteNode("projects", SectionElement("Проекты"), meta={"tab_title": "Проекты"})
-sec2.add_child(SiteNode("gunverse", CardElement("Gunverse", "Компонентный фреймворк для игровых механик.")))
-sec2.add_child(SiteNode("liion", CardElement("Li-ion Sim", "Научный комплекс моделирования батарей.")))
-tabs.add_child(sec2)
+def load_presentation(project_name: str) -> FileDI:
+    """Создаёт TextElement, наполненный содержимым presentation.md проекта."""
+    return FileDI(
+        TextElement,
+        load_first=True,
+        content=Path("content") / "projects" / project_name / "presentation.md"
+    )
 
-# Вкладка 3: О себе
-sec3 = SiteNode("about", SectionElement("О себе"), meta={"tab_title": "О себе"})
-sec3.add_child(SiteNode("bio", TextElement("5 лет инженерной практики, математический бэкграунд, бакалавр приборостроения.")))
-tabs.add_child(sec3)
+def load_methodology(filename: str) -> FileDI:
+    return FileDI(
+        TextElement,
+        load_first=True,
+        content=Path("content") / "methodology" / filename
+    )
 
-page.add_child(tabs)
+# ----------------------------------------------------------------------
+# Точка входа сборки
+# ----------------------------------------------------------------------
+def main():
+    page = SiteNode("page")
 
-# Инициализация и сборка
-page.init_tree()
-html_content = page.build_tree()
+    # ========================== ВКЛАДКИ ==========================
+    tabs = SiteNode("maintabs", TabsElement())
 
-# Вставка в шаблон (теперь добавим стили и скрипт)
-full_html = f"""<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>XSEO</title>
-  <style>
-    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{ font-family: system-ui, sans-serif; color: #1a1a1a; background: #f5f7fa; line-height: 1.5; }}
-    .container {{ max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }}
-    header {{ text-align: center; padding: 3rem 0 2rem; }}
-    h1 {{ font-size: 2.8rem; font-weight: 700; margin-bottom: 0.3rem; }}
-    .subtitle {{ font-size: 1.3rem; color: #555; }}
-    .tabs {{ display: flex; justify-content: center; gap: 1rem; margin: 2.5rem 0 1rem; flex-wrap: wrap; }}
-    .tab-btn {{ background: #e2e6ea; border: none; padding: 0.7rem 1.8rem; border-radius: 2rem; font-size: 1rem; cursor: pointer; transition: 0.2s; }}
-    .tab-btn.active {{ background: #0f1626; color: white; }}
-    .tab-btn:hover:not(.active) {{ background: #cfd5db; }}
-    .tab-pane {{ display: none; animation: fade 0.3s; }}
-    .tab-pane.active {{ display: block; }}
-    @keyframes fade {{ from {{ opacity: 0; transform: translateY(6px); }} to {{ opacity: 1; transform: translateY(0); }} }}
-    .card {{ background: white; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 6px 18px rgba(0,0,0,0.05); }}
-    footer {{ text-align: center; padding: 2rem 0; color: #777; font-size: 0.9rem; }}
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>XSEO</h1>
-      <div class="subtitle">Systems Architect</div>
-      <p>Нерушимые фундаменты для сложных систем</p>
-    </header>
-    {html_content}
-  </div>
-  <footer>&copy; 2026 XSEO</footer>
-  <script>
-    function switchTab(targetId) {{
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-      const pane = document.getElementById(targetId);
-      if (pane) pane.classList.add('active');
-      document.querySelectorAll('.tab-btn').forEach(btn => {{
-        if (btn.getAttribute('onclick')?.includes(`'${{targetId}}'`)) btn.classList.add('active');
-      }});
-    }}
-  </script>
-</body>
-</html>"""
+    # ---------- 1. Методология ----------
+    method_sec = SiteNode("methodology", SectionElement("Методология"),
+                          meta={"tab_title": "Методология"})
+    accordion = SiteNode("accordion", AccordionElement())
 
-out = Path("project/index.html")
-out.parent.mkdir(parents=True, exist_ok=True)
-out.write_text(full_html, encoding="utf-8")
-print(f"Сайт собран: {len(full_html)} байт")
+    # Порядок файлов и начальное состояние аккордеона
+    method_items = [
+        ("01_library_module.md", False),
+        ("02_unbreakable_foundation.md", False),
+        ("03_ai_native.md", False),
+        ("04_plugin_first.md", False),
+        ("05_extractable_code.md", False),
+    ]
+
+    for filename, open_default in method_items:
+        # Загружаем содержимое .md через инъектор → получаем TextElement
+        text_elem = load_methodology(filename)()
+        # Аккордеон без заголовка (он уже есть в Markdown)
+        item = SiteNode("item", AccordionItemElement("", open_by_default=open_default))
+        item.add_child(SiteNode("content", text_elem))
+        accordion.add_child(item)
+
+    method_sec.add_child(accordion)
+    tabs.add_child(method_sec)
+    # ---------- 2. Проекты ----------
+    proj_sec = SiteNode("projects", SectionElement("Проекты"),
+                        meta={"tab_title": "Проекты"})
+
+    # Вспомогательная функция для создания карточки проекта
+    def add_project_card(section: SiteNode, project_name: str, title: str, tags: list[str]):
+        card = SiteNode(f"{project_name}_card", CardElement(title, ""))
+        # Загружаем превью через инъектор
+        card.add_child(SiteNode("desc", load_preview(project_name)()))
+        for tag in tags:
+            card.add_child(SiteNode(f"tag_{tag}", TechTagElement(tag)))
+        card.add_child(SiteNode("btn", ButtonElement("Подробнее", project_name)))
+        section.add_child(card)
+
+    add_project_card(proj_sec, "gunverse", "Gunverse",
+                     ["GDScript", "ECS", "Zero-If"])
+    add_project_card(proj_sec, "simulator", "Li-ion Battery Simulation",
+                     ["Python", "DearPyGui", "Dataflow"])
+    add_project_card(proj_sec, "qa_graph", "QA Graph Migrator",
+                     ["Python", "State Monad", "PostgreSQL"])
+
+    tabs.add_child(proj_sec)
+
+    # ---------- 3. О себе ----------
+    about_sec = SiteNode("about", SectionElement("О себе"),
+                         meta={"tab_title": "О себе"})
+    about_sec.add_child(SiteNode("bio", TextElement(
+        "**5 лет** инженерной практики (2021–2026). Совмещал роли QA-архитектора, "
+        "техлида игрового проекта, фрилансера и R&D-инженера.\n\n"
+        "Бакалавр приборостроения (МГТУ им. Баумана), математическое самообразование "
+        "(теория категорий, аппроксимация, тервер).\n\n"
+        "Уверенный Linux (Arch), английский B1 (техническая документация)."
+    )))
+    tabs.add_child(about_sec)
+
+    # ---------- 4. Контакты ----------
+    contact_sec = SiteNode("contact", SectionElement("Контакты"),
+                           meta={"tab_title": "Контакты"})
+    contacts = [
+        "📧 [xseo.22.24vl@gmail.com](mailto:xseo.22.24vl@gmail.com)",
+        "💬 Telegram: [@Xseo_Tristielles](https://t.me/Xseo_Tristielles)",
+        "🐙 GitHub: [mrXseo](https://github.com/mrXseo)",
+        "📍 Россия, UTC+3",
+    ]
+    for contact_text in contacts:
+        contact_sec.add_child(SiteNode("info", TextElement(contact_text)))
+    tabs.add_child(contact_sec)
+
+    page.add_child(tabs)
+
+    # ========================== МОДАЛЬНЫЕ ОКНА ==========================
+    modals_container = SiteNode("modals", ModalContainerElement())
+
+    # Функция для создания модального окна с презентацией
+    def add_modal(container: SiteNode, project_name: str, title: str):
+        modal = SiteNode(f"modal_{project_name}", ModalElement(project_name, title))
+        # Загружаем полное описание через инъектор
+        modal.add_child(SiteNode("body", load_presentation(project_name)()))
+        container.add_child(modal)
+
+    add_modal(modals_container, "gunverse", "Gunverse — компонентный фреймворк")
+    add_modal(modals_container, "simulator", "Li-ion Battery Simulation")
+    add_modal(modals_container, "qa_graph", "QA Graph Migrator")
+
+    page.add_child(modals_container)
+
+    # ========================== СБОРКА ==========================
+    builder = SiteBuilder(Path(__file__).parent)
+    output_file = Path("index.html")
+    builder.build(page, output_path=str(output_file), page_title="XSEO")
+    abs_path = output_file.resolve()
+    size_bytes = abs_path.stat().st_size
+    print(f"Сайт собран: {abs_path}")
+    print(f"Размер: {size_bytes} байт")
+
+
+if __name__ == "__main__":
+    main()
