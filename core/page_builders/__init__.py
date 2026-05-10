@@ -1,20 +1,20 @@
-from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
+from jinja2 import Environment, FileSystemLoader
+from ..page_nodes import SiteNode
 
-class PageBuilder:
-    """Уровень 5: сборщик страницы."""
-    def __init__(self, template_dir: str = "templates"):
-        template_path = Path(__file__).parent.parent.parent / template_dir
+class SiteBuilder:
+    def __init__(self, project_root : str = "", template_dir: str = "templates"):
+        self.project_root = project_root or Path().cwd() / "project"
+        template_path = project_root / template_dir
         self.env = Environment(loader=FileSystemLoader(str(template_path)))
 
-    def build(self, page, output_path: str = "output/index.html"):
-        """Рендерит полную HTML-страницу и сохраняет на диск."""
-        template = self.env.get_template("base.html")
-        html = template.render(
-            title=page.title,
-            content=page.render(context={})  # контекст пока пустой
-        )
-        output_path : Path = Path(output_path)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(html, encoding="utf-8")
+    def build(self, root : SiteNode, output_path: str = "index.html",
+              template_name: str = "base.html", **template_vars) -> str:
+        root.init_tree()
+        content = root.build_tree()
+        template = self.env.get_template(template_name)
+        html = template.render(content=content, **template_vars)
+        out = self.project_root / Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(html, encoding='utf-8')
         return html
