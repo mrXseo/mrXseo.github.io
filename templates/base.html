@@ -73,6 +73,31 @@
     .md-content li {
         margin-bottom: 0.25rem;
     }
+
+    /* Главная страница — отступы и разделители */
+    .md-content > h2,
+    .md-content > h3 {
+        margin-top: 2rem;
+    }
+
+    /* Блок навигационных кнопок */
+    .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin: 1.5rem 0 2rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    /* Горизонтальный разделитель между смысловыми блоками */
+    .md-content hr {
+        margin: 2rem 0;
+        border: none;
+        border-top: 1px solid #e2e6ea;
+    }
   </style>
 </head>
 <body>
@@ -94,15 +119,37 @@
     // Tabs logic
     const tabButtons = document.querySelectorAll('.tab-btn');
     const panes = document.querySelectorAll('.tab-pane');
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const target = btn.dataset.tab;
+
+    function activateTab(targetId) {
+        // Деактивируем все панели и кнопки
         panes.forEach(p => p.classList.remove('active'));
-        document.getElementById(target).classList.add('active');
-      });
+        tabButtons.forEach(b => b.classList.remove('active'));
+
+        // Активируем нужную панель
+        const targetPane = document.getElementById(targetId);
+        if (targetPane) targetPane.classList.add('active');
+
+        // Активируем ВСЕ кнопки (и в меню, и в навигации), которые ведут на этот target
+        document.querySelectorAll(`.tab-btn[data-tab="${targetId}"]`).forEach(b => {
+            b.classList.add('active');
+        });
+    }
+
+    // Навешиваем обработчики на все tab-кнопки
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            activateTab(btn.dataset.tab);
+        });
     });
+
+    // При загрузке страницы подсвечиваем навигационные кнопки для изначально активной вкладки
+    const initialActivePane = document.querySelector('.tab-pane.active');
+    if (initialActivePane) {
+        const activeId = initialActivePane.id;
+        document.querySelectorAll(`.tab-btn[data-tab="${activeId}"]`).forEach(b => {
+            b.classList.add('active');
+        });
+    }
 
     // Accordion logic
     document.querySelectorAll('.accordion-header').forEach(header => {
@@ -126,10 +173,9 @@
     function closeModal(id) {
       document.getElementById('modal-' + id).classList.remove('open');
     }
-    // Close modal on outside click
     window.addEventListener('click', (e) => {
       if (e.target.classList.contains('modal')) e.target.classList.remove('open');
     });
-  </script>
+</script>
 </body>
 </html>

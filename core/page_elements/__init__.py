@@ -20,5 +20,6 @@ from .for_txt_and_md import (
 from .interactive import (
     TabsElement,
     ModalElement,
-    ButtonElement
+    ButtonElement,
+    NavigationElement
 )

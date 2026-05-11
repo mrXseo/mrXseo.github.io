@@ -8,7 +8,8 @@ from core.page_elements import (
     TextElement, SectionElement, TabsElement,
     CardElement, TechTagElement, ButtonElement,
     ModalElement, ModalContainerElement,
-    AccordionElement, AccordionItemElement
+    AccordionElement, AccordionItemElement,
+    NavigationElement
 )
 from core.page_nodes import SiteNode
 from core.page_builders import SiteBuilder
@@ -45,6 +46,13 @@ def load_methodology(filename: str) -> FileDI:
         content=Path("content") / "methodology" / filename
     )
 
+def load_home(filename: str) -> FileDI:
+    return FileDI(
+        TextElement,
+        load_first=True,
+        content=Path("content") / "home" / filename
+    )
+
 # ----------------------------------------------------------------------
 # Точка входа сборки
 # ----------------------------------------------------------------------
@@ -53,8 +61,57 @@ def main():
 
     # ========================== ВКЛАДКИ ==========================
     tabs = SiteNode("maintabs", TabsElement())
+    
+    # ---------- 1. Главная ----------
+    main_sec = SiteNode("main", SectionElement("Приветствую"),
+                        meta={"tab_title": "Главная"})
 
-    # ---------- 1. Методология ----------
+    # Блок 1: Приветствие и ключевая информация
+    main_sec.add_child(SiteNode("hero", load_home("hero.md")()))
+    
+    # Блок 2: Ключевые цифры (highlights)
+    main_sec.add_child(SiteNode("highlights", load_home("highlights.md")()))
+    
+    nav_projs_1 = SiteNode("nav_buttons", NavigationElement([
+        ("Проекты", "page_maintabs_projects")
+    ]))
+
+    main_sec.add_child(nav_projs_1)
+
+    # Блок 3: Навигационный помощник
+    # Текст-подсказка перед кнопками (можно загрузить из md или оставить инлайн)
+    main_sec.add_child(SiteNode("nav_hint", load_home("navigation.md")()))
+
+    nav_all = SiteNode("nav_buttons", NavigationElement([
+        ("Методология", "page_maintabs_methodology"),
+        ("Проекты", "page_maintabs_projects"),
+        ("О себе", "page_maintabs_about"),
+        ("Контакты", "page_maintabs_contact"),
+    ]))
+    main_sec.add_child(nav_all)
+    
+    # Блок 4: Анонс проектов
+    main_sec.add_child(SiteNode("projects_teaser", load_home("projects_teaser.md")()))
+    
+    nav_projs_2 = SiteNode("nav_buttons", NavigationElement([
+        ("Проекты", "page_maintabs_projects")
+    ]))
+
+    main_sec.add_child(nav_projs_2)
+
+
+    # Блок 5: Контакты (кратко)
+    main_sec.add_child(SiteNode("contacts_teaser", load_home("contacts_teaser.md")()))
+    
+    nav_cont = SiteNode("nav_buttons", NavigationElement([
+        ("Контакты", "page_maintabs_contact"),
+    ]))
+
+    main_sec.add_child(nav_cont)
+
+    tabs.add_child(main_sec)
+
+    # ---------- 2. Методология ----------
     method_sec = SiteNode("methodology", SectionElement("Методология"),
                           meta={"tab_title": "Методология"})
     accordion = SiteNode("accordion", AccordionElement())
@@ -78,7 +135,7 @@ def main():
 
     method_sec.add_child(accordion)
     tabs.add_child(method_sec)
-    # ---------- 2. Проекты ----------
+    # ---------- 3. Проекты ----------
     proj_sec = SiteNode("projects", SectionElement("Проекты"),
                         meta={"tab_title": "Проекты"})
 
@@ -101,7 +158,7 @@ def main():
 
     tabs.add_child(proj_sec)
 
-    # ---------- 3. О себе ----------
+    # ---------- 4. О себе ----------
     about_sec = SiteNode("about", SectionElement("О себе"),
                          meta={"tab_title": "О себе"})
     about_sec.add_child(SiteNode("bio", TextElement(
@@ -113,7 +170,7 @@ def main():
     )))
     tabs.add_child(about_sec)
 
-    # ---------- 4. Контакты ----------
+    # ---------- 5. Контакты ----------
     contact_sec = SiteNode("contact", SectionElement("Контакты"),
                            meta={"tab_title": "Контакты"})
     contacts = [

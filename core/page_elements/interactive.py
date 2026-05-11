@@ -1,5 +1,5 @@
 from .page_element import PageElement, ElementTag, Html
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 
 
 class TabsElement(PageElement):
@@ -79,3 +79,25 @@ class ModalElement(PageElement):
             {body_html}
           </div>
         </div>'''
+
+
+class NavigationElement(PageElement):
+    """Навигационные кнопки для быстрого перехода к указанным tab-панелям."""
+    def __init__(self, links: List[Tuple[str, str]]) -> None:
+        super().__init__()
+        # links — список (название, tab_id)
+        self.links = links
+
+    def _init(self, **kwargs) -> None:
+        pass
+
+    def _ready(self, **kwargs) -> None:
+        pass
+
+    def _build(self, **kwargs) -> None:
+        buttons = []
+        for title, tab_id in self.links:
+            buttons.append(
+                f'<button class="tab-btn" data-tab="{tab_id}">{title}</button>'
+            )
+        self.result_html = f'<div class="nav-links">{"".join(buttons)}</div>'
